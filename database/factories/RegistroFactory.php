@@ -2,22 +2,19 @@
 
 namespace Database\Factories;
 
+use App\Models\Registro;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Registro>
- */
 class RegistroFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Registro::class;
+
     public function definition()
     {
         return [
-            //
+            'valor' => $this->faker->randomFloat(2, 0, 100),
+            'unidades' => $this->faker->randomElement(['abcd', 'efgh', 'ijkl', 'mnop', 'qrst']),
+            'sensor_id' => \App\Models\Sensor::factory(), // Asegúrate de tener el Factory para Sensor
         ];
     }
 }
