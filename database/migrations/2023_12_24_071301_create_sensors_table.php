@@ -15,7 +15,13 @@ return new class extends Migration
     {
         Schema::create('sensors', function (Blueprint $table) {
             $table->id();
+            $table->string('key');
+            $table->text('descripcion');
+            $table->unsignedBigInteger('coche_id');
+            $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('coche_id')->references('id')->on('coches');
         });
     }
 

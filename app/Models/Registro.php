@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Registro extends Model
 {
-    use HasFactory;
+    protected $table = 'registros';
+    protected $primaryKey = 'id';
+    protected $fillable = ['valor', 'unidades', 'sensor_id'];
+
+    public function sensor()
+    {
+        return $this->belongsTo(Sensor::class, 'sensor_id', 'id');
+    }
 }

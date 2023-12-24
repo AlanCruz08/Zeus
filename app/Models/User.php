@@ -35,4 +35,9 @@ class User extends Authenticatable
         'created_at',
         'updated_at',
     ];
+
+    public function coches()
+    {
+        return $this->hasMany(Coche::class, 'user_id', 'id');
+    }
 }
