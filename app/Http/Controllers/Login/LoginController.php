@@ -105,7 +105,7 @@ class loginController extends Controller
 
         return response()->json([
             'msg' => 'Sesión cerrada',
-            'status' => 'success'
+            'status' => 200
         ], 200);
     }
 
