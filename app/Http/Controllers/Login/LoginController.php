@@ -92,11 +92,13 @@ class loginController extends Controller
                 'status' => '500'
             ], 500);
 
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
-            'msg' => 'Usuario creado',
-            'data' => $userNew,
-            'status' => '201'
-        ], 201);
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user,
+        ], 200);
     }
 
     public function logout(Request $request)
