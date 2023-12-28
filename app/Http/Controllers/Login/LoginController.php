@@ -92,7 +92,7 @@ class loginController extends Controller
                 'status' => '500'
             ], 500);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $userNew->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
