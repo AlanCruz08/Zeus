@@ -103,15 +103,19 @@ class loginController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-
+        if (!$request->user()->currentAccessToken()->delete())
+            return response()->json([
+                'msg' => 'Error al cerrar sesión',
+                'status' => 500
+            ], 500);
+            
         return response()->json([
             'msg' => 'Sesión cerrada',
             'status' => 200
         ], 200);
     }
 
-    public function validar(Request $request)
+    public function validar(Request $request, $id)
     {
         $accessToken = $request->bearerToken();
 
@@ -123,7 +127,6 @@ class loginController extends Controller
             ], 404);
         }
 
-        $id = $request->id;
         $token = PersonalAccessToken::findToken($accessToken);
 
         if (!$token || $token->revoked) {
@@ -140,7 +143,7 @@ class loginController extends Controller
             ->first();
 
         if (!$consu)
-            response()->json([
+            return response()->json([
                 'msg' => 'El token no es valido',
                 'data' => false,
                 'status' => 422
