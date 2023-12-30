@@ -139,13 +139,13 @@ class loginController extends Controller
 
         $consu = DB::table('personal_access_tokens')
             ->where('tokenable_id', $id)
-            ->where('token', $accessToken)
+            ->where('token', $token->token)
             ->first();
 
         if (!$consu)
             return response()->json([
                 'msg' => 'El token no es valido',
-                'data' => false,
+                'data' => $token,
                 'status' => 422
             ], 422);
 
