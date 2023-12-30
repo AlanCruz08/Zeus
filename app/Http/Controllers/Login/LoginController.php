@@ -139,7 +139,7 @@ class loginController extends Controller
 
         $consu = DB::table('personal_access_tokens')
             ->where('tokenable_id', $id)
-            ->where('token', $token)
+            ->where('token', $accessToken)
             ->first();
 
         if (!$consu)
