@@ -44,42 +44,37 @@ class CocheController extends Controller
         ], 201);
     }
 
-    public function show(Coche $coche)
+    public function show($user_id)
     {
-        //
+        $coches = Coche::where('user_id', $user_id)->get();
+        if(!$coches)
+            return response()->json([
+                'msg' => 'No se encontraron coches',
+                'data' => 'error',
+                'status' => '404'
+            ], 404);
+
+        return response()->json([
+            'coches' => $coches,
+            'status' => '200'
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Coche  $coche
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Coche $coche)
+    public function showAll($user_id)
     {
-        //
+        $coches = Coche::with('sensors')->where('user_id', $user_id)->get();
+        if(!$coches)
+            return response()->json([
+                'msg' => 'No se encontraron coches',
+                'data' => 'error',
+                'status' => '404'
+            ], 404);
+
+        return response()->json([
+            'coches' => $coches,
+            'status' => '200'
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Coche  $coche
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Coche $coche)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Coche  $coche
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Coche $coche)
-    {
-        //
-    }
+    
 }
