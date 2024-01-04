@@ -37,6 +37,13 @@ class CocheController extends Controller
 
         $coche = Coche::create($request->all());
 
+        if (!$coche)
+            return response()->json([
+                'msg' => 'Error al crear el coche',
+                'data' => 'error',
+                'status' => '500'
+            ], 500);
+
         return response()->json([
             'msg' => 'Coche creado correctamente',
             'data' => $coche,
@@ -46,16 +53,20 @@ class CocheController extends Controller
 
     public function show($user_id)
     {
-        $coches = Coche::where('user_id', $user_id)->get();
+        $coches = Coche::where('user_id', $user_id)
+                        ->select('alias', 'descripcion')
+                        ->get();
         if(!$coches)
             return response()->json([
                 'msg' => 'No se encontraron coches',
                 'data' => 'error',
                 'status' => '404'
             ], 404);
+        
 
         return response()->json([
-            'coches' => $coches,
+            'msg' => 'Coches encontrados',
+            'data' => $coches,
             'status' => '200'
         ], 200);
     }
@@ -76,5 +87,5 @@ class CocheController extends Controller
         ], 200);
     }
 
-    
+
 }
