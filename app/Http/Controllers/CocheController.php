@@ -54,7 +54,7 @@ class CocheController extends Controller
     public function show($user_id)
     {
         $coches = Coche::where('user_id', $user_id)
-                        ->select('alias', 'descripcion')
+                        ->select('id', 'alias', 'descripcion')
                         ->get();
         if(!$coches)
             return response()->json([
@@ -63,7 +63,6 @@ class CocheController extends Controller
                 'status' => '404'
             ], 404);
         
-
         return response()->json([
             'msg' => 'Coches encontrados',
             'data' => $coches,
