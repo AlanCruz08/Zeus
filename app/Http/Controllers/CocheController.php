@@ -87,5 +87,20 @@ class CocheController extends Controller
         ], 200);
     }
 
+    public function ubicacion($coche_id)
+    {
+        $coche = Coche::find($coche_id);
+        if(!$coche)
+            return response()->json([
+                'msg' => 'No se encontró el coche',
+                'data' => 'error',
+                'status' => '404'
+            ], 404);
+
+        return response()->json([
+            'ubicacion' => $coche->ubicacion,
+            'status' => '200'
+        ], 200);
+    }
 
 }
