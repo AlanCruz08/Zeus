@@ -129,4 +129,55 @@ class RegistroController extends Controller
             ], 500);
         }
     }
+
+    public function ledControlPost(int $coche_id, Request $request) {
+        $coche = Coche::find($coche_id);
+        if(!$coche) {
+            return response()->json([
+                'msg' => 'Coche no encontrado',
+                'status' => 404
+            ], 404);
+        }
+        try {
+            $response = $this->client->post($this->username . '/feeds/ledcontrol/data', [
+                'json' => [
+                    'value' => $request->value
+                ]
+            ]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+
+            $filteredFeed = [
+                'value' => $respuesta['value'],
+                'feedkey' => $respuesta['feed_key'],
+            ];
+
+            $registro = Registro::create([
+                'valor' => $filteredFeed['value'],
+                'unidades' => '0/1',
+                'sensor_id' => 1,
+                'dispositivo_id' => $coche_id
+            ]);
+
+            if (!$registro) {
+                return response()->json([
+                    'msg' => 'Error al guardar registro!',
+                    'data' => $registro,
+                    'status' => 500
+                ], 500);
+            }
+
+            return response()->json([
+                'msg' => 'Registros hecho con exito!',
+                'data' => $registro,
+                'status' => 200
+            ], $response->getStatusCode());
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Error al recuperar registros!',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
 }
