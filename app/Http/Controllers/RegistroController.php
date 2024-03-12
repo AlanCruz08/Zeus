@@ -49,7 +49,7 @@ class RegistroController extends Controller
 
             $registro = Registro::create([
                 'valor' => $filteredFeed['last_value'],
-                'unidades' => '°C',
+                'unidades' => 'LtLg',
                 'sensor_id' => 1,
                 'dispositivo_id' => $coche_id
             ]);
@@ -72,6 +72,53 @@ class RegistroController extends Controller
                     'latitud' => $latitud,
                     'longitud' => $longitud
                 ],
+                'status' => 200
+            ], $response->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Error al recuperar registros!',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+
+    public function ledControl(int $coche_id) {
+        $coche = Coche::find($coche_id);
+        if(!$coche) {
+            return response()->json([
+                'msg' => 'Coche no encontrado',
+                'status' => 404
+            ], 404);
+        }
+        try {
+            $response = $this->client->get($this->username . '/feeds/ledcontrol');
+            $ubicacion = json_decode($response->getBody()->getContents(), true);
+            
+            $filteredFeed = [
+                'username' => $ubicacion['username'],
+                'name' => $ubicacion['name'],
+                'last_value' => $ubicacion['last_value'],
+            ];
+
+            $registro = Registro::create([
+                'valor' => $filteredFeed['last_value'],
+                'unidades' => '0/1',
+                'sensor_id' => 1,
+                'dispositivo_id' => $coche_id
+            ]);
+
+            if (!$registro) {
+                return response()->json([
+                    'msg' => 'Error al guardar registro!',
+                    'data' => $registro,
+                    'status' => 500
+                ], 500);
+            }
+
+            return response()->json([
+                'msg' => 'Registros recuperados con exito!',
+                'data' => $filteredFeed['last_value'],
                 'status' => 200
             ], $response->getStatusCode());
         } catch (\Exception $e) {
