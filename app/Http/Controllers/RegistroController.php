@@ -6,6 +6,7 @@ use App\Models\Registro;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Models\Coche;
+use DateTime;
 
 class RegistroController extends Controller
 {
@@ -172,6 +173,71 @@ class RegistroController extends Controller
                 'status' => 200
             ], $response->getStatusCode());
 
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Error al recuperar registros!',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+
+    public function reporte(int $coche_id)
+    {
+        $coche = Coche::find($coche_id);
+        if(!$coche) {
+            return response()->json([
+                'msg' => 'Coche no encontrado',
+                'status' => 404
+            ], 404);
+        }
+        try {
+            $response = $this->client->get($this->username . '/feeds/distancia/data');
+            $reporte = json_decode($response->getBody()->getContents(), true);
+
+            
+            foreach ($reporte as $item) {
+                $create_at = new DateTime($item['created_at']);
+
+                $existingRecord = Registro::where('valor', $item['value'])
+                              ->where('created_at', $create_at->format('Y-m-d H:i:s'))
+                              ->first();
+
+                if (!$existingRecord) {
+                    $registro = new Registro();
+                    $registro->valor = $item['value'];
+                    $registro->unidades = 'cm';
+                    $registro->created_at = $create_at->format('Y-m-d H:i:s');
+                    $registro->sensor_id = 1;
+                    $registro->save();
+                }
+
+            }
+
+            $registros = Registro::where('valor', '<=', 10)
+                            ->where('unidades', 'cm')
+                            ->get();
+            
+            if ($registros->isEmpty()) {
+                return response()->json([
+                    'msg' => 'No hay registros para mostrar!',
+                    'status' => 404
+                ], 404);
+            }
+
+            foreach ($registros as $registro) {
+                $filtered_data[] = [
+                    'valor' => $registro['valor'],
+                    'unidades' => $registro['unidades'],
+                    'created_at' => $registro['created_at']
+                ];
+            }
+
+            return response()->json([
+                'msg' => 'Registros recuperados con exito!',
+                'data' => $filtered_data,
+                'status' => 200
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'msg' => 'Error al recuperar registros!',
