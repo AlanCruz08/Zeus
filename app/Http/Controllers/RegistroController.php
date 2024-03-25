@@ -226,12 +226,19 @@ class RegistroController extends Controller
             }
 
             foreach ($registros as $registro) {
+                $created_at_parts = explode('T', $registro['created_at']);
+                $date = $created_at_parts[0];
+                $time = substr($created_at_parts[1], 0, 8);
+
                 $filtered_data[] = [
                     'valor' => $registro['valor'],
                     'unidades' => $registro['unidades'],
-                    'created_at' => $registro['created_at']
+                    'fecha' => $date,
+                    'hora' => $time
                 ];
             }
+
+            
 
             return response()->json([
                 'msg' => 'Registros recuperados con exito!',
