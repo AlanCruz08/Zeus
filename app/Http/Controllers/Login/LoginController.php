@@ -38,16 +38,16 @@ class loginController extends Controller
 
         if (!$user)
             return response()->json([
-                'msg' => 'Usuario no encontrado',
-                'data' => 'error',
-                'status' => '404'
+                'access_token' => 'null',
+                'token_type' => 'error',
+                'user' => null
             ], 404);
 
         if (!Hash::check($request->password, $user->password))
             return response()->json([
-                'msg' => 'Contraseña incorrecta',
-                'data' => 'error',
-                'status' => '401'
+                'access_token' => 'Contraseña incorrecta',
+                'token_type' => 'error',
+                'user' => null
             ], 401);
 
         $token = $user->createToken('auth_token')->plainTextToken;
