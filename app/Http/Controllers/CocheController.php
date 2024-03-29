@@ -11,7 +11,6 @@ class CocheController extends Controller
     protected $reglasCrear = [
         'alias' => 'required|string|max:60',
         'descripcion' => 'required|string|max:255',
-        'codigo' => 'required|integer|max:60',
         'user_id' => 'required|integer',
     ];
 
@@ -34,8 +33,15 @@ class CocheController extends Controller
                 'data' => $validacion->errors(),
                 'status' => '422'
             ], 422);
+        
+        $codigo_ran = rand(100000, 999999);
 
-        $coche = Coche::create($request->all());
+        $coche = Coche::create([
+            'alias' => $request->alias,
+            'descripcion' => $request->descripcion,
+            'user_id' => $request->user_id,
+            'codigo' => $codigo_ran
+        ]);
 
         if (!$coche)
             return response()->json([
