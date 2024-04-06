@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coche;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Sensor;
 
 class CocheController extends Controller
 {
@@ -41,6 +42,12 @@ class CocheController extends Controller
             'descripcion' => $request->descripcion,
             'user_id' => $request->user_id,
             'codigo' => $codigo_ran
+        ]);
+
+        $sensor = Sensor::create([
+            'coche_id' => $coche->id,
+            'key'      => 'gps',
+            
         ]);
 
         if (!$coche)

@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Sensor;
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use App\Models\Registro;
+use Schema;
 
 class MiComando extends Command
 {
@@ -60,7 +62,9 @@ class MiComando extends Command
             $id_ubi = $this->client->get($this->username . '/feeds/idubicacion');
             $idubi_valor = $this->convertirInfo($id_ubi);
 
-            $this->guardarInfo($ubi_valor, 'LtLg', $idubi_valor);
+            $idkey = Sensor::where('key', $idubi_valor)->value('id');
+
+            $this->guardarInfo($ubi_valor, 'LtLg', $idkey);
 
 
             $distancia = $this->client->get($this->username . '/feeds/distancia');
@@ -69,7 +73,9 @@ class MiComando extends Command
             $id_dis = $this->client->get($this->username . '/feeds/iddistancia');
             $iddis_valor = $this->convertirInfo($id_dis);
 
-            $this->guardarInfo($dist_valor, 'cm', $iddis_valor);
+            $idkeydist = Sensor::where('key', $iddis_valor)->value('id');
+
+            $this->guardarInfo($dist_valor, 'cm', $idkeydist);
             
             sleep(25);
             //return 0;
