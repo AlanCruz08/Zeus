@@ -38,6 +38,6 @@ class User extends Authenticatable
 
     public function coches()
     {
-        return $this->hasMany(Coche::class, 'user_id', 'id');
+        return $this->belongsToMany(Coche::class, 'user_coches', 'user_id', 'coche_id')->withTimestamps();
     }
 }

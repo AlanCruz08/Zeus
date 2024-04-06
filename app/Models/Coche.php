@@ -14,7 +14,7 @@ class Coche extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_coches', 'coche_id', 'user_id')->withTimestamps();
     }
 
     public function sensors()
