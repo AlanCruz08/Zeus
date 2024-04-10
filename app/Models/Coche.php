@@ -12,9 +12,9 @@ class Coche extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['alias', 'descripcion', 'codigo', 'user_id'];
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class, 'user_coches', 'coche_id', 'user_id')->withTimestamps();
+        return $this->belongsTo(User::class, 'user_coches', 'coche_id', 'user_id');
     }
 
     public function sensors()
