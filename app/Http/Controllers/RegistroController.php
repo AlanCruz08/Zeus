@@ -196,58 +196,26 @@ class RegistroController extends Controller
             ], 404);
         }
         try {
-            $response = $this->client->get($this->username . '/feeds/distancia/data');
-            $reporte = json_decode($response->getBody()->getContents(), true);
-
-            
-            foreach ($reporte as $item) {
-                $create_at = new DateTime($item['created_at']);
-
-                $existingRecord = Registro::where('valor', $item['value'])
-                              ->where('created_at', $create_at->format('Y-m-d H:i:s'))
-                              ->first();
-
-                if (!$existingRecord) {
-                    $registro = new Registro();
-                    $registro->valor = $item['value'];
-                    $registro->unidades = 'cm';
-                    $registro->created_at = $create_at->format('Y-m-d H:i:s');
-                    $registro->sensor_id = 1;
-                    $registro->save();
-                }
-
-            }
-
-            $registros = Registro::where('valor', '<=', 10)
-                            ->where('unidades', 'cm')
-                            ->get();
-            
-            if ($registros->isEmpty()) {
-                return response()->json([
-                    'msg' => 'No hay registros para mostrar!',
-                    'status' => 404
-                ], 404);
-            }
-
-            foreach ($registros as $registro) {
-                $created_at_format =  $registro->created_at->format('Y-m-d, H:i:s');
-                $created_at_parts = explode(',', $created_at_format);
-                $date = $created_at_parts[0];
-                $time = $created_at_parts[1];
-
-                $filtered_data[] = [
-                    'valor' => $registro['valor'],
-                    'unidades' => $registro['unidades'],
-                    'fecha' => $date,
-                    'hora' => $time
+            // Obtener los registros del coche con valor menor de 10
+            $registros = Registro::whereHas('sensor', function ($query) use ($coche_id) {
+                $query->where('coche_id', $coche_id);
+            })->where('valor', '<', 10)
+            ->select('valor', 'unidades', 'created_at')
+            ->get()
+            ->map(function ($registro) {
+                return [
+                    'valor' => $registro->valor,
+                    'unidades' => $registro->unidades,
+                    'fecha' => $registro->created_at->format('Y-m-d'),
+                    'hora' => $registro->created_at->format('H:i:s')
                 ];
-            }
-
+            });
+    
             return response()->json([
-                'msg' => 'Registros recuperados con exito!',
-                'data' => $filtered_data,
+                'msg' => 'Registros recuperados con éxito!',
+                'data' => $registros,
                 'status' => 200
-            ], 200);
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'msg' => 'Error al recuperar registros!',
@@ -255,5 +223,6 @@ class RegistroController extends Controller
                 'status' => 500
             ], 500);
         }
+        
     }
 }
