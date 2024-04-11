@@ -137,40 +137,4 @@ class CocheController extends Controller
             'status' => '200'
         ], 200);
     }
-
-    public function showAll($user_id)
-    {
-        $coches = Coche::with('sensors')
-                        ->join('user_coches', 'coches.id', '=', 'user_coches.coche_id')
-                        ->where('user_coches.user_id', $user_id)->get();
-
-        if(!$coches)
-            return response()->json([
-                'msg' => 'No se encontraron coches',
-                'data' => 'error',
-                'status' => '404'
-            ], 404);
-
-        return response()->json([
-            'coches' => $coches,
-            'status' => '200'
-        ], 200);
-    }
-
-    public function ubicacion($coche_id)
-    {
-        $coche = Coche::find($coche_id);
-        if(!$coche)
-            return response()->json([
-                'msg' => 'No se encontró el coche',
-                'data' => 'error',
-                'status' => '404'
-            ], 404);
-
-        return response()->json([
-            'ubicacion' => $coche->ubicacion,
-            'status' => '200'
-        ], 200);
-    }
-
 }

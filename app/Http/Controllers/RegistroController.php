@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Registro;
+use App\Models\Sensor;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Models\Coche;
@@ -84,7 +85,8 @@ class RegistroController extends Controller
         }
     }
 
-    public function ledControl(int $coche_id) {
+    public function ledControl(int $coche_id) 
+    {
         $coche = Coche::find($coche_id);
         if(!$coche) {
             return response()->json([
@@ -102,11 +104,14 @@ class RegistroController extends Controller
                 'last_value' => $ubicacion['last_value'],
             ];
 
+            $sensor_id = Sensor::where('coche_id', $coche_id)
+                                ->where('sku', 'LIKE', 'LED%')
+                                ->first();
+
             $registro = Registro::create([
                 'valor' => $filteredFeed['last_value'],
                 'unidades' => '0/1',
-                'sensor_id' => 1,
-                'dispositivo_id' => $coche_id
+                'sensor_id' => $sensor_id->id,
             ]);
 
             if (!$registro) {
