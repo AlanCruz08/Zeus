@@ -115,14 +115,15 @@ class RegistroController extends Controller
                 if ($lastRegistro && $lastRegistro->valor == $filteredFeed['last_value']) {
                     $registro = $lastRegistro->valor;
                 } else {
-                    $registro = Registro::create([
+                    $registroNew = Registro::create([
                         'valor' => $filteredFeed['last_value'],
                         'unidades' => '0/1',
                         'sensor_id' => $sensor_id->id,
                     ]);
+                    $registro = $registroNew->valor;
                 }
             } else {
-                $registro = 0;
+                $registro = "0";
             }
 
             if (!$registro) {
@@ -135,7 +136,7 @@ class RegistroController extends Controller
 
             return response()->json([
                 'msg' => 'Registros recuperados con exito!',
-                'data' => $filteredFeed['last_value'],
+                'data' => $registro,
                 'status' => 200
             ], $response->getStatusCode());
         } catch (\Exception $e) {
