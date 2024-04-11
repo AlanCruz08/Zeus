@@ -39,50 +39,31 @@ class RegistroController extends Controller
                 'status' => 404
             ], 404);
         }
-        try {
-            $response = $this->client->get($this->username . '/feeds/ubicacion');
-            $ubicacion = json_decode($response->getBody()->getContents(), true);
-            
-            $filteredFeed = [
-                'username' => $ubicacion['username'],
-                'name' => $ubicacion['name'],
-                'last_value' => $ubicacion['last_value'],
-            ];
 
-            $registro = Registro::create([
-                'valor' => $filteredFeed['last_value'],
-                'unidades' => 'LtLg',
-                'sensor_id' => 1,
-                'dispositivo_id' => $coche_id
-            ]);
+        $sensor_id = Sensor::where('coche_id', $coche_id)
+                            ->where('sku', 'LIKE', 'GPS%')
+                            ->first();
 
-            if (!$registro) {
-                return response()->json([
-                    'msg' => 'Error al guardar registro!',
-                    'data' => $registro,
-                    'status' => 500
-                ], 500);
-            }
-
-            $ubicacionDividida = explode(',', $filteredFeed['last_value']);
-            $latitud = $ubicacionDividida[0];
-            $longitud = $ubicacionDividida[1];
-
-            return response()->json([
-                'msg' => 'Registros recuperados con exito!',
-                'data' => [
-                    'latitud' => $latitud,
-                    'longitud' => $longitud
-                ],
-                'status' => 200
-            ], $response->getStatusCode());
-        } catch (\Exception $e) {
-            return response()->json([
-                'msg' => 'Error al recuperar registros!',
-                'error' => $e->getMessage(),
-                'status' => 500
-            ], 500);
+        if ($sensor_id) {
+            $registro = Registro::where('sensor_id', $sensor_id->id)
+                                ->orderBy('created_at', 'desc')
+                                ->first();
+        } else {
+            $registro = "0,0";
         }
+
+        $ubicacionDividida = explode(',', $registro->valor);
+        $latitud = $ubicacionDividida[0];
+        $longitud = $ubicacionDividida[1];
+
+        return response()->json([
+            'msg' => 'Registros recuperados con exito!',
+            'data' => [
+                'latitud' => $latitud,
+                'longitud' => $longitud
+            ],
+            'status' => 200
+        ], 200);
     }
 
     public function ledControl(int $coche_id) 

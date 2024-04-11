@@ -62,7 +62,7 @@ class MiComando extends Command
             $id_ubi = $this->client->get($this->username . '/feeds/idubicacion');
             $idubi_valor = $this->convertirInfo($id_ubi);
 
-            $idkey = Sensor::where('key', $idubi_valor)->value('id');
+            $idkey = Sensor::where('sku', $idubi_valor)->value('id');
 
             $this->guardarInfo($ubi_valor, 'LtLg', $idkey);
 
@@ -73,7 +73,7 @@ class MiComando extends Command
             $id_dis = $this->client->get($this->username . '/feeds/iddistancia');
             $iddis_valor = $this->convertirInfo($id_dis);
 
-            $idkeydist = Sensor::where('key', $iddis_valor)->value('id');
+            $idkeydist = Sensor::where('sku', $iddis_valor)->value('id');
 
             $this->guardarInfo($dist_valor, 'cm', $idkeydist);
             
