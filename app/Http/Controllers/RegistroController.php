@@ -197,15 +197,21 @@ class RegistroController extends Controller
         }
         try {
             // Obtener los registros del coche con valor menor de 10
+            $sensor_id = Sensor::where('coche_id', $coche_id)
+                                ->where('sku', 'LIKE', 'DIS%')
+                                ->first();
+
             $registros = Registro::whereHas('sensor', function ($query) use ($coche_id) {
                 $query->where('coche_id', $coche_id);
             })->where('valor', '<', 10)
+            ->where('sensor_id', $sensor_id->id)
             ->select('valor', 'unidades', 'created_at')
             ->get()
             ->map(function ($registro) {
                 return [
                     'valor' => $registro->valor,
                     'unidades' => $registro->unidades,
+                    'sensor_id' => $registro->sensor_id,
                     'fecha' => $registro->created_at->format('Y-m-d'),
                     'hora' => $registro->created_at->format('H:i:s')
                 ];
