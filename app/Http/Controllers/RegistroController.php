@@ -126,14 +126,6 @@ class RegistroController extends Controller
                 $registro = "0";
             }
 
-            if (!$registro) {
-                return response()->json([
-                    'msg' => 'Error al guardar registro!',
-                    'data' => $registro,
-                    'status' => 500
-                ], 500);
-            }
-
             return response()->json([
                 'msg' => 'Registros recuperados con exito!',
                 'data' => $registro,
