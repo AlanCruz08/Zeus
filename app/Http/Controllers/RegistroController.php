@@ -165,19 +165,23 @@ class RegistroController extends Controller
             $sensor_id = Sensor::where('coche_id', $coche_id)
                                 ->where('sku', 'LIKE', 'LED%')
                                 ->first();
-
-            $registro = Registro::create([
-                'valor' => $filteredFeed['value'],
-                'unidades' => '0/1',
-                'sensor_id' => $sensor_id->id,
-            ]);
-
-            if (!$registro) {
-                return response()->json([
-                    'msg' => 'Error al guardar registro!',
-                    'data' => $registro,
-                    'status' => 500
-                ], 500);
+            
+            if ($sensor_id) {
+                $lastRegistro = Registro::where('sensor_id', $sensor_id->id)
+                                    ->orderBy('created_at', 'desc')
+                                    ->first();
+                if ($lastRegistro && $lastRegistro->valor == $filteredFeed['last_value']) {
+                    $registro = $lastRegistro->valor;
+                } else {
+                    $registroNew = Registro::create([
+                        'valor' => $filteredFeed['last_value'],
+                        'unidades' => '0/1',
+                        'sensor_id' => $sensor_id->id,
+                    ]);
+                    $registro = $registroNew->valor;
+                }
+            } else {
+                $registro = "0";
             }
 
             return response()->json([
