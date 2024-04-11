@@ -205,7 +205,7 @@ class RegistroController extends Controller
                 $query->where('coche_id', $coche_id);
             })->where('valor', '<', 10)
             ->where('sensor_id', $sensor_id->id)
-            ->select('valor', 'unidades', 'created_at')
+            ->select('valor', 'unidades','sensor_id', 'created_at')
             ->get()
             ->map(function ($registro) {
                 return [
