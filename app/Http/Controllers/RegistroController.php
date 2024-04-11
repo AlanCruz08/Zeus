@@ -113,7 +113,7 @@ class RegistroController extends Controller
                                     ->orderBy('created_at', 'desc')
                                     ->first();
                 if ($lastRegistro && $lastRegistro->valor == $filteredFeed['last_value']) {
-                    $registro = null;
+                    $registro = $lastRegistro->valor;
                 } else {
                     $registro = Registro::create([
                         'valor' => $filteredFeed['last_value'],
@@ -122,7 +122,7 @@ class RegistroController extends Controller
                     ]);
                 }
             } else {
-                $registro = null;
+                $registro = 0;
             }
 
             if (!$registro) {
