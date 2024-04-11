@@ -132,7 +132,8 @@ class CocheController extends Controller
             ], 404);
 
         return response()->json([
-            'sensors' => $sensors,
+            'msg' => 'Sensores encontrados',
+            'data' => $sensors,
             'status' => '200'
         ], 200);
     }
