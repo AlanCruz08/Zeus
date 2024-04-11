@@ -174,7 +174,7 @@ class RegistroController extends Controller
                     $registro = $lastRegistro;
                 } else {
                     $registroNew = Registro::create([
-                        'valor' => $filteredFeed['last_value'],
+                        'valor' => $filteredFeed['value'],
                         'unidades' => '0/1',
                         'sensor_id' => $sensor_id->id,
                     ]);
