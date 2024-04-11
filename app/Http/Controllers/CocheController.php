@@ -42,7 +42,7 @@ class CocheController extends Controller
         if(!$coche)
             return response()->json([
                 'msg' => 'No existe un coche con ese código',
-                'data' => 'error',
+                'data' => null,
                 'status' => '404'
             ], 404);
 
@@ -50,7 +50,7 @@ class CocheController extends Controller
         if($user_coches_exist)
             return response()->json([
                 'msg' => 'El coche ya está asignado a un usuario',
-                'data' => 'error',
+                'data' => null,
                 'status' => '409'
             ], 409);
         
@@ -58,7 +58,7 @@ class CocheController extends Controller
         if(!$user)
             return response()->json([
                 'msg' => 'No existe un usuario con ese id',
-                'data' => 'error',
+                'data' => null,
                 'status' => '404'
             ], 404);
         
@@ -67,7 +67,7 @@ class CocheController extends Controller
         if (!$user->coches()->find($coche->id))
             return response()->json([
                 'msg' => 'Error al crear el coche',
-                'data' => 'error',
+                'data' => null,
                 'status' => '500'
             ], 500);
 
