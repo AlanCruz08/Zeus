@@ -206,6 +206,7 @@ class RegistroController extends Controller
             })->where('valor', '<', 10)
             ->where('sensor_id', $sensor_id->id)
             ->select('valor', 'unidades','sensor_id', 'created_at')
+            ->orderByDesc('created_at')
             ->get()
             ->map(function ($registro) {
                 return [
