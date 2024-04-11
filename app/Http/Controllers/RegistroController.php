@@ -136,7 +136,8 @@ class RegistroController extends Controller
         }
     }
 
-    public function ledControlPost(int $coche_id, Request $request) {
+    public function ledControlPost(int $coche_id, Request $request) 
+    {
         $coche = Coche::find($coche_id);
         if(!$coche) {
             return response()->json([
@@ -157,11 +158,14 @@ class RegistroController extends Controller
                 'feedkey' => $respuesta['feed_key'],
             ];
 
+            $sensor_id = Sensor::where('coche_id', $coche_id)
+                                ->where('sku', 'LIKE', 'LED%')
+                                ->first();
+
             $registro = Registro::create([
                 'valor' => $filteredFeed['value'],
                 'unidades' => '0/1',
-                'sensor_id' => 1,
-                'dispositivo_id' => $coche_id
+                'sensor_id' => $sensor_id->id,
             ]);
 
             if (!$registro) {
