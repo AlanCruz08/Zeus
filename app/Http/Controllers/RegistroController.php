@@ -48,13 +48,18 @@ class RegistroController extends Controller
             $registro = Registro::where('sensor_id', $sensor_id->id)
                                 ->orderBy('created_at', 'desc')
                                 ->first();
+            if ($registro) {
+                $ubicacionDividida = explode(',', $registro->valor);
+                $latitud = $ubicacionDividida[0];
+                $longitud = $ubicacionDividida[1];
+            } else {
+                $latitud = "0";
+                $longitud = "0";
+            }
         } else {
-            $registro = "0,0";
+            $latitud = "0";
+            $longitud = "0";
         }
-
-        $ubicacionDividida = explode(',', $registro->valor);
-        $latitud = $ubicacionDividida[0];
-        $longitud = $ubicacionDividida[1];
 
         return response()->json([
             'msg' => 'Registros recuperados con exito!',
