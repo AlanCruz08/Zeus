@@ -171,17 +171,18 @@ class RegistroController extends Controller
                                     ->orderBy('created_at', 'desc')
                                     ->first();
                 if ($lastRegistro && $lastRegistro->valor == $filteredFeed['last_value']) {
-                    $registro = $lastRegistro->valor;
+                    $registro = $lastRegistro;
                 } else {
                     $registroNew = Registro::create([
                         'valor' => $filteredFeed['last_value'],
                         'unidades' => '0/1',
                         'sensor_id' => $sensor_id->id,
                     ]);
-                    $registro = $registroNew->valor;
+                    $registro = $registroNew;
                 }
             } else {
-                $registro = "0";
+                $registro = Registro::where('unidades', '0/1')
+                                ->first();
             }
 
             return response()->json([
