@@ -44,7 +44,7 @@ class CocheController extends Controller
                 'msg' => 'No existe un coche con ese código',
                 'data' => null,
                 'status' => '404'
-            ], 204);
+            ], 200);
 
         $user_coches_exist = DB::table('user_coches')->where('coche_id', $coche->id)->first();
         if($user_coches_exist)
@@ -60,7 +60,7 @@ class CocheController extends Controller
                 'msg' => 'No existe un usuario con ese id',
                 'data' => null,
                 'status' => '404'
-            ], 204);
+            ], 200);
         
         $user->coches()->attach($coche->id);
 
