@@ -211,7 +211,6 @@ class RegistroController extends Controller
                 return [
                     'valor' => $registro->valor,
                     'unidades' => $registro->unidades,
-                    'sensor_id' => $registro->sensor_id,
                     'fecha' => $registro->created_at->format('Y-m-d'),
                     'hora' => $registro->created_at->format('H:i:s')
                 ];
