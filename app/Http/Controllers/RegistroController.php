@@ -96,23 +96,34 @@ class RegistroController extends Controller
         }
         try {
             $response = $this->client->get($this->username . '/feeds/ledcontrol');
-            $ubicacion = json_decode($response->getBody()->getContents(), true);
+            $response_json = json_decode($response->getBody()->getContents(), true);
             
             $filteredFeed = [
-                'username' => $ubicacion['username'],
-                'name' => $ubicacion['name'],
-                'last_value' => $ubicacion['last_value'],
+                'username' => $response_json['username'],
+                'name' => $response_json['name'],
+                'last_value' => $response_json['last_value'],
             ];
 
             $sensor_id = Sensor::where('coche_id', $coche_id)
                                 ->where('sku', 'LIKE', 'LED%')
                                 ->first();
 
-            $registro = Registro::create([
-                'valor' => $filteredFeed['last_value'],
-                'unidades' => '0/1',
-                'sensor_id' => $sensor_id->id,
-            ]);
+            if ($sensor_id) {
+                $lastRegistro = Registro::where('sensor_id', $sensor_id->id)
+                                    ->orderBy('created_at', 'desc')
+                                    ->first();
+                if ($lastRegistro && $lastRegistro->valor == $filteredFeed['last_value']) {
+                    $registro = null;
+                } else {
+                    $registro = Registro::create([
+                        'valor' => $filteredFeed['last_value'],
+                        'unidades' => '0/1',
+                        'sensor_id' => $sensor_id->id,
+                    ]);
+                }
+            } else {
+                $registro = null;
+            }
 
             if (!$registro) {
                 return response()->json([
