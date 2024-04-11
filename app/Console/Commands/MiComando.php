@@ -77,7 +77,7 @@ class MiComando extends Command
 
             $this->guardarInfo($dist_valor, 'cm', $idkeydist);
             
-            sleep(25);
+            sleep(35);
             //return 0;
         }
     }
