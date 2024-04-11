@@ -113,6 +113,30 @@ class CocheController extends Controller
         ], 200);
     }
 
+    public function showSensors($coche_id)
+    {
+        $coche = Coche::find($coche_id);
+        if(!$coche)
+            return response()->json([
+                'msg' => 'No se encontró el coche',
+                'data' => 'error',
+                'status' => '404'
+            ], 404);
+
+        $sensors = Sensor::where('coche_id', $coche_id)->get();
+        if(!$sensors)
+            return response()->json([
+                'msg' => 'No se encontraron sensores',
+                'data' => 'error',
+                'status' => '404'
+            ], 404);
+
+        return response()->json([
+            'sensors' => $sensors,
+            'status' => '200'
+        ], 200);
+    }
+
     public function showAll($user_id)
     {
         $coches = Coche::with('sensors')
