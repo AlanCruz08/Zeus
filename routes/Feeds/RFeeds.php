@@ -10,6 +10,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/ledcontrol/{coche_id}', 'ledControl')->whereNumber('coche_id');
         Route::post('/ledcontrol/{coche_id}', 'ledControlPost')->whereNumber('coche_id');
         Route::get('/reportedis/{coche_id}', 'reporte')->whereNumber('coche_id');
+        Route::post('/control/{coche_id}', 'control')->whereNumber('coche_id');
     });
 });
 Route::get('/check', function() { return 'ok'; });

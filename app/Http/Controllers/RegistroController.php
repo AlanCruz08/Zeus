@@ -231,4 +231,47 @@ class RegistroController extends Controller
         }
         
     }
+
+    public function control($coche_id, Request $request) 
+    {
+        $coche = Coche::find($coche_id);
+        if(!$coche) {
+            return response()->json([
+                'msg' => 'Coche no encontrado',
+                'status' => 404
+            ], 404);
+        }
+        try {
+            $response = $this->client->post($this->username . '/feeds/control/data', [
+                'json' => [
+                    'value' => $request->value
+                ]
+            ]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+
+            $filteredFeed = [
+                'value' => $respuesta['value'],
+                'feedkey' => $respuesta['feed_key'],
+            ];
+
+            if (!$filteredFeed) {
+                return response()->json([
+                    'msg' => 'Error al recuperar registros!',
+                    'status' => 500
+                ], 500);
+            }
+
+            return response()->json([
+                'msg' => 'Registros recuperados con exito!',
+                'data' => $filteredFeed['value'],
+                'status' => 200
+            ], $response->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Error al recuperar registros!',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
 }
