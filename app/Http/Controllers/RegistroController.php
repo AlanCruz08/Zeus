@@ -274,4 +274,59 @@ class RegistroController extends Controller
             ], 500);
         }
     }
+
+    public function ledChoque(int $coche_id)
+    {
+        $coche = Coche::find($coche_id);
+        if(!$coche) {
+            return response()->json([
+                'msg' => 'Coche no encontrado',
+                'status' => 404
+            ], 404);
+        }
+        try {
+            $response = $this->client->get($this->username . '/feeds/ledchoque');
+            $response_json = json_decode($response->getBody()->getContents(), true);
+            
+            $filteredFeed = [
+                'username' => $response_json['username'],
+                'name' => $response_json['name'],
+                'last_value' => $response_json['last_value'],
+            ];
+
+            $sensor_id = Sensor::where('coche_id', $coche_id)
+                                ->where('sku', 'LIKE', 'LEC%')
+                                ->first();
+
+            if ($sensor_id) {
+                $lastRegistro = Registro::where('sensor_id', $sensor_id->id)
+                                    ->orderBy('created_at', 'desc')
+                                    ->first();
+                if ($lastRegistro && $lastRegistro->valor == $filteredFeed['last_value']) {
+                    $registro = $lastRegistro->valor;
+                } else {
+                    $registroNew = Registro::create([
+                        'valor' => $filteredFeed['last_value'],
+                        'unidades' => '0/1',
+                        'sensor_id' => $sensor_id->id,
+                    ]);
+                    $registro = $registroNew->valor;
+                }
+            } else {
+                $registro = "0";
+            }
+
+            return response()->json([
+                'msg' => 'Registros recuperados con exito!',
+                'data' => $registro,
+                'status' => 200
+            ], $response->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Error al recuperar registros!',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
 }
