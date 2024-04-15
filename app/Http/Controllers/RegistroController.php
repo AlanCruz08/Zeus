@@ -313,9 +313,15 @@ class RegistroController extends Controller
                     $registro = $registroNew->valor;
                 }
             } else {
-                $registro = "0";
+                $registro = null;
             }
 
+            if ($registro == null) {
+                return response()->json([
+                    'msg' => 'Error al recuperar registros!',
+                    'status' => 500
+                ], 500);
+            }
             return response()->json([
                 'msg' => 'Registros recuperados con exito!',
                 'data' => $registro,
